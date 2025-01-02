@@ -16,13 +16,21 @@ export const handler = async (event: APIGatewayEvent, context: Context) => {
     const body = JSON.parse(event.body || '{}');
     console.log('Parsed body:', body);
 
-    const { username, password, city } = body;
+    const { username, password, city, age } = body;
 
-    if (!username || !password || !city) {
-      console.error('Valideringsfel: Användarnamn, lösenord eller stad saknas');
+    if (!username || !password || !city || !age) {
+      console.error('Valideringsfel: Användarnamn, lösenord, stad eller ålder saknas');
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Användarnamn, lösenord och stad krävs.' }),
+        body: JSON.stringify({ error: 'Användarnamn, lösenord, stad och ålder krävs.' }),
+      };
+    }
+
+    if (typeof age !== 'number' || age <= 0) {
+      console.error('Valideringsfel: Ogiltig ålder');
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Ålder måste vara ett positivt heltal.' }),
       };
     }
 
@@ -39,6 +47,7 @@ export const handler = async (event: APIGatewayEvent, context: Context) => {
         Username: username,
         Password: hashedPassword,
         City: city,
+        Age: age,
         CreatedAt: new Date().toISOString(),
       },
     };

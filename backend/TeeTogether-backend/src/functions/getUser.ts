@@ -4,21 +4,29 @@ import { DynamoDB } from 'aws-sdk';
 const dynamoDb = new DynamoDB.DocumentClient();
 
 export const handler = async (event: APIGatewayEvent, context: Context) => {
-  console.log('Hämtar alla användare, event:', JSON.stringify(event));
+  console.log('Hämtar användare, event:', JSON.stringify(event));
 
   try {
     const params = {
       TableName: 'GolfUser',
     };
 
-    console.log('Skannar DynamoDB-tabellen:', JSON.stringify(params));
+    console.log('Hämtar alla användare från DynamoDB:', JSON.stringify(params));
     const result = await dynamoDb.scan(params).promise();
+    console.log('Resultat från DynamoDB:', JSON.stringify(result));
 
-    console.log('Hämtade användare:', result.Items);
+    const users = result.Items?.map((user) => ({
+      UserId: user.UserId,
+      Username: user.Username,
+      City: user.City,
+      Age: user.Age, 
+      CurrentHCP: user.CurrentHCP,
+      LatestRound: user.LatestRound || null,
+    }));
 
     return {
       statusCode: 200,
-      body: JSON.stringify(result.Items),
+      body: JSON.stringify(users),
     };
   } catch (error) {
     console.error('Fel vid hämtning av användare:', error);

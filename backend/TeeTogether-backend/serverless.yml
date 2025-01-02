@@ -44,4 +44,11 @@ functions:
     events:
       - httpApi:
           path: /login
-          method: post        
+          method: post   
+
+  registerRound:
+    handler: src/functions/registerRound.handler
+    events:
+      - httpApi:
+          path: /registerRound
+          method: post             
