@@ -31,4 +31,10 @@ functions:
       - httpApi:
           path: /users/register
           method: post
-
+  
+  getAllUsers:
+    handler: src/functions/getUser.handler
+    events:
+      - httpApi:
+          path: /users
+          method: get

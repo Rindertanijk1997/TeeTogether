@@ -1,9 +1,13 @@
-import { APIGatewayEvent, Context } from 'aws-lambda';
+import { APIGatewayEvent, Context } from 'aws-lambda'; 
 import { DynamoDB } from 'aws-sdk';
 import bcrypt from 'bcryptjs';
-import { v4 as uuidv4 } from 'uuid';
 
 const dynamoDb = new DynamoDB.DocumentClient();
+
+const generateFourLetterId = (): string => {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  return Array.from({ length: 4 }, () => letters.charAt(Math.floor(Math.random() * letters.length))).join('');
+};
 
 export const handler = async (event: APIGatewayEvent, context: Context) => {
   console.log('Lambda startar, event:', JSON.stringify(event));
@@ -12,20 +16,20 @@ export const handler = async (event: APIGatewayEvent, context: Context) => {
     const body = JSON.parse(event.body || '{}');
     console.log('Parsed body:', body);
 
-    const { username, password } = body;
+    const { username, password, city } = body;
 
-    if (!username || !password) {
-      console.error('Valideringsfel: Användarnamn eller lösenord saknas');
+    if (!username || !password || !city) {
+      console.error('Valideringsfel: Användarnamn, lösenord eller stad saknas');
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Användarnamn och lösenord krävs.' }),
+        body: JSON.stringify({ error: 'Användarnamn, lösenord och stad krävs.' }),
       };
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     console.log('Lösenord krypterat:', hashedPassword);
 
-    const userId = uuidv4();
+    const userId = generateFourLetterId();
     console.log('Genererat userId:', userId);
 
     const params = {
@@ -34,11 +38,12 @@ export const handler = async (event: APIGatewayEvent, context: Context) => {
         UserId: userId,
         Username: username,
         Password: hashedPassword,
+        City: city,
         CreatedAt: new Date().toISOString(),
       },
     };
 
-    console.log('Förbereder att skriva till DynamoDB med params:', JSON.stringify(params));
+    console.log('Skriver följande objekt till DynamoDB:', JSON.stringify(params.Item));
     await dynamoDb.put(params).promise();
     console.log('Skrivning till DynamoDB lyckades.');
 
