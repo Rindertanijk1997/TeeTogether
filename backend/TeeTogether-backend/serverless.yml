@@ -38,3 +38,10 @@ functions:
       - httpApi:
           path: /users
           method: get
+
+  loginUser:
+    handler: src/functions/loginUser.handler
+    events:
+      - httpApi:
+          path: /login
+          method: post        
