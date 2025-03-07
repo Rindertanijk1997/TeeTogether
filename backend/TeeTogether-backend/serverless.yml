@@ -6,7 +6,48 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: eu-north-1
-  role: arn:aws:iam::050451366469:role/lambda-full-access-dynamodb
+  environment:
+    JWT_SECRET: ${ssm:/tee-together/JWT_SECRET}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:eu-north-1:*:*"
+    - Effect: Allow
+      Action:
+        - logs:CreateLogGroup
+        - logs:CreateLogStream
+        - logs:PutLogEvents
+      Resource: "*"
+
+# Minskar storleken på deployment-paketet och optimerar byggprocessen
+package:
+  individually: true
+  exclude:
+    - node_modules/aws-sdk/**  # AWS SDK ingår redan i Lambda
+    - node_modules/**
+    - .git/**
+    - .vscode/**
+    - .serverless/**
+    - tests/**
+    - docs/**
+    - README.md
+    - package-lock.json
+    - yarn.lock
+    - .env
+
+# Använd Serverless inbyggda ESBuild istället för Webpack
+custom:
+  esbuild:
+    bundle: true
+    minify: true
+    sourcemap: false
+    target: "node20"
+    exclude: ["aws-sdk"]
 
 resources:
   Resources:
@@ -17,12 +58,51 @@ resources:
         AttributeDefinitions:
           - AttributeName: UserId
             AttributeType: S
+          - AttributeName: Username
+            AttributeType: S
         KeySchema:
           - AttributeName: UserId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
-        SSESpecification:
-          SSEEnabled: true
+        GlobalSecondaryIndexes:
+          - IndexName: Username-index
+            KeySchema:
+              - AttributeName: Username
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    FriendRequestsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: FriendRequests
+        AttributeDefinitions:
+          - AttributeName: RequesterId
+            AttributeType: S
+          - AttributeName: FriendId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: RequesterId
+            KeyType: HASH
+          - AttributeName: FriendId
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+
+    UserFriendsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: UserFriends
+        AttributeDefinitions:
+          - AttributeName: UserId
+            AttributeType: S
+          - AttributeName: FriendId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: UserId
+            KeyType: HASH
+          - AttributeName: FriendId
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
 
 functions:
   registerUser:
@@ -51,4 +131,33 @@ functions:
     events:
       - httpApi:
           path: /registerRound
-          method: post             
+          method: post
+
+  sendFriendRequest:
+    handler: src/functions/sendFriendRequest.handler
+    events:
+      - httpApi:
+          path: /friends/request
+          method: post
+
+  acceptFriendRequest:
+    handler: src/functions/acceptFriendRequest.handler
+    events:
+      - httpApi:
+          path: /friends/accept
+          method: post
+
+  searchGolfFriends:
+    handler: src/functions/searchGolfFriends.handler
+    events:
+      - httpApi:
+          path: /friends/search
+          method: get
+
+  removeFriend:
+    handler: src/functions/removeFriend.handler
+    events:
+      - httpApi:
+          path: /friends/remove
+          method: delete
+
