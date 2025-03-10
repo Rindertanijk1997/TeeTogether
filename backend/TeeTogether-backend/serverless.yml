@@ -160,3 +160,10 @@ functions:
       - httpApi:
           path: /friends/remove
           method: delete
+
+  getUserRounds:
+    handler: src/functions/getUserRounds.handler
+    events:
+      - httpApi:
+          path: /rounds
+          method: get

@@ -1,4 +1,4 @@
-.dashboard-container {
+.friends-container {
     max-width: 600px;
     margin: 50px auto;
     padding: 20px;
@@ -17,6 +17,9 @@
   li {
     padding: 10px;
     border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   
   button {
@@ -30,5 +33,9 @@
   
   button:hover {
     background-color: #0056b3;
+  }
+  
+  button:disabled {
+    background-color: gray;
   }
   
