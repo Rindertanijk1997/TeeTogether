@@ -1,0 +1,35 @@
+.app-container {
+    padding-bottom: 70px; /* Skapa utrymme för navigationen */
+  }
+  
+  .nav-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #007bff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 2px solid #0056b3;
+  }
+  
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .nav-item svg {
+    font-size: 24px;
+    margin-bottom: 3px;
+  }
+  
+  .nav-item.active {
+    color: #ffcc00;
+  }
+  
