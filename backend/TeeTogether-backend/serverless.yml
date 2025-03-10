@@ -40,7 +40,7 @@ package:
     - yarn.lock
     - .env
 
-# Använd Serverless inbyggda ESBuild istället för Webpack
+# Använd Serverless inbyggda ESBuild för TypeScript-optimering
 custom:
   esbuild:
     bundle: true
@@ -111,7 +111,7 @@ functions:
       - httpApi:
           path: /users/register
           method: post
-  
+
   getAllUsers:
     handler: src/functions/getUser.handler
     events:
@@ -124,7 +124,7 @@ functions:
     events:
       - httpApi:
           path: /login
-          method: post   
+          method: post
 
   registerRound:
     handler: src/functions/registerRound.handler
@@ -160,4 +160,3 @@ functions:
       - httpApi:
           path: /friends/remove
           method: delete
-
