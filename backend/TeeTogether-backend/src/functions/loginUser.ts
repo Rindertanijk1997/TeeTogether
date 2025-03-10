@@ -49,8 +49,13 @@ export const handler = async (event: APIGatewayEvent, context: Context) => {
 
       return {
         statusCode: 200,
-        body: JSON.stringify({ message: 'Inloggning lyckades!', token }),
+        body: JSON.stringify({
+          message: 'Inloggning lyckades!',
+          token,
+          userId: user.UserId // ✅ Skicka med UserId
+        }),
       };
+      
     } else {
       return {
         statusCode: 404,

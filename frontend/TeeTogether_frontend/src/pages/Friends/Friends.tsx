@@ -1,73 +1,45 @@
 import { useEffect, useState } from "react";
-import { getFriends, acceptFriendRequest, removeFriend } from "../../api";
-import { useNavigate } from "react-router-dom";
-import "./Friends.css";
+import { getFriends } from "../../api";
+import "./friends.css";
 
 const Friends = () => {
-  const [friends, setFriends] = useState<any[]>([]);
-  const [requests, setRequests] = useState<any[]>([]);
-  const [message, setMessage] = useState("");
-  const navigate = useNavigate();
-  const userId = localStorage.getItem("userId"); 
+  const [friends, setFriends] = useState<
+    { FriendId: string; Username: string; CurrentHCP: number | string }[]
+  >([]);
+  const userId = localStorage.getItem("userId") || "";
 
   useEffect(() => {
-    fetchFriends();
-  }, []);
+    if (userId) {
+      fetchFriends();
+    }
+  }, [userId]);
 
   const fetchFriends = async () => {
-    if (!userId) return;
-    const data = await getFriends(userId);
-    setFriends(data.friends || []);
-    setRequests(data.pendingRequests || []);
-  };
-
-  const handleAcceptRequest = async (friendId: string) => {
-    if (!userId) return;
-    await acceptFriendRequest(userId, friendId);
-    setMessage("Vänförfrågan accepterad!");
-    fetchFriends();
-  };
-
-  const handleRemoveFriend = async (friendId: string) => {
-    if (!userId) return;
-    await removeFriend(userId, friendId);
-    setMessage("Vän borttagen!");
-    fetchFriends();
+    try {
+      const data = await getFriends(userId);
+      console.log("📌 API-svar från backend:", data);
+      setFriends(data);
+    } catch (error) {
+      console.error("❌ Fel vid hämtning av vänner:", error);
+    }
   };
 
   return (
     <div className="friends-container">
-      <h1>Mina Vänner</h1>
-
-      <h2>Vänner</h2>
-      <ul>
-        {friends.length > 0 ? (
-          friends.map((friend) => (
-            <li key={friend.UserId}>
-              {friend.Username} - HCP: {friend.CurrentHCP}
-              <button onClick={() => handleRemoveFriend(friend.UserId)}>❌ Ta bort</button>
+      <h1>Mina vänner</h1>
+      {friends.length > 0 ? (
+        <ul>
+          {friends.map((friend) => (
+            <li key={friend.FriendId}>
+              <strong>{friend.Username || "Okänt namn"}</strong>
+              <br />
+              <small>HCP: {friend.CurrentHCP !== "Okänt" ? friend.CurrentHCP : "Okänt"}</small>
             </li>
-          ))
-        ) : (
-          <p>Du har inga vänner ännu.</p>
-        )}
-      </ul>
-
-      <h2>Vänförfrågningar</h2>
-      <ul>
-        {requests.length > 0 ? (
-          requests.map((request) => (
-            <li key={request.UserId}>
-              {request.Username} har skickat en förfrågan!
-              <button onClick={() => handleAcceptRequest(request.UserId)}>✅ Acceptera</button>
-            </li>
-          ))
-        ) : (
-          <p>Inga vänförfrågningar just nu.</p>
-        )}
-      </ul>
-
-      <p>{message}</p>
+          ))}
+        </ul>
+      ) : (
+        <p>Du har inga vänner ännu.</p>
+      )}
     </div>
   );
 };

@@ -167,3 +167,10 @@ functions:
       - httpApi:
           path: /rounds
           method: get
+
+  getFriends:
+    handler: src/functions/getFriends.handler
+    events:
+      - httpApi:
+          path: /friends
+          method: get        

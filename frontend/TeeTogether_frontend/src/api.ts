@@ -81,10 +81,15 @@ export const declineFriendRequest = async (userId: string, friendId: string) => 
   });
 };
 
-// 🔹 Hämta användarens vänner
 export const getFriends = async (userId: string) => {
-  return fetchData(`${API_BASE_URL}/friends/search?userId=${userId}`);
+  const response = await fetch(
+    `https://w9h1wx1u7l.execute-api.eu-north-1.amazonaws.com/friends?userId=${userId}`
+  );
+  const data = await response.json();
+  console.log("📌 API-svar från backend:", data); // Loggar API-svaret
+  return data;
 };
+
 
 // 🔹 Ta bort en vän
 export const removeFriend = async (userId: string, friendId: string) => {
@@ -122,3 +127,10 @@ export const getUserRounds = async (userId: string) => {
 export const searchGolfFriends = async (userId: string) => {
   return fetchData(`${API_BASE_URL}/friends/search?userId=${userId}`);
 };
+
+// 🔹 Hämta pending vänförfrågningar
+export const getPendingRequests = async (userId: string) => {
+  const response = await fetch(`${API_BASE_URL}/friends/pending?userId=${userId}`);
+  return response.json();
+};
+

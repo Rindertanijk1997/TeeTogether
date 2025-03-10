@@ -3,49 +3,47 @@ import { DynamoDB } from 'aws-sdk';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
-// Skapa en TypeScript-interface för en användare
-interface GolfUser {
-  UserId: string;
-  Username: string;
-  City: string;
-  Age: number;
-  CurrentHCP: number;
-}
-
 export const handler = async (event: APIGatewayEvent) => {
   try {
-    // Hämta sökparametrar
-    const { city, minAge, maxAge, minHCP, maxHCP } = event.queryStringParameters || {};
+    const userId = event.queryStringParameters?.userId;
+    if (!userId) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "UserId krävs för att söka vänner." }),
+      };
+    }
 
-    // Definiera DynamoDB Scan
-    const params: DynamoDB.DocumentClient.ScanInput = {
-      TableName: 'GolfUser',
+    // 🔹 Hämta alla vänner
+    const friendsParams = {
+      TableName: "UserFriends",
+      KeyConditionExpression: "UserId = :userId",
+      ExpressionAttributeValues: { ":userId": userId },
     };
+    const friendsResult = await dynamoDb.query(friendsParams).promise();
+    const friends = friendsResult.Items || [];
 
-    // Hämta användare från DynamoDB
-    const result = await dynamoDb.scan(params).promise();
+    // 🔹 Hämta pending vänförfrågningar
+    const requestsParams = {
+      TableName: "FriendRequests",
+      FilterExpression: "FriendId = :userId AND #status = :pending",
+      ExpressionAttributeValues: { ":userId": userId, ":pending": "pending" },
+      ExpressionAttributeNames: { "#status": "Status" },
+    };
+    const requestsResult = await dynamoDb.scan(requestsParams).promise();
+    const pendingRequests = requestsResult.Items || [];
 
-    // Konvertera resultatet till en array av GolfUser
-    const users: GolfUser[] = (result.Items as GolfUser[]) || [];
-
-    // Filtrera användarna baserat på sökvillkor
-    const filteredUsers = users.filter(user => {
-      return (!city || user.City === city) &&
-             (!minAge || user.Age >= Number(minAge)) &&
-             (!maxAge || user.Age <= Number(maxAge)) &&
-             (!minHCP || user.CurrentHCP >= Number(minHCP)) &&
-             (!maxHCP || user.CurrentHCP <= Number(maxHCP));
-    });
+    console.log("📌 API-svar - Friends:", friends);
+    console.log("📌 API-svar - Pending Requests:", pendingRequests);
 
     return {
       statusCode: 200,
-      body: JSON.stringify(filteredUsers),
+      body: JSON.stringify({ friends, pendingRequests }),
     };
   } catch (error) {
-    console.error('Fel vid sökning av golfvänner:', error);
+    console.error("❌ Fel vid hämtning av vänner:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Något gick fel vid sökning av golfvänner.' }),
+      body: JSON.stringify({ error: "Något gick fel vid sökning av golfvänner." }),
     };
   }
 };
