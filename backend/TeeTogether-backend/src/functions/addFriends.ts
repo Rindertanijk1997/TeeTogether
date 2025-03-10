@@ -8,13 +8,13 @@ export const handler = async (event: APIGatewayEvent, context: Context) => {
 
   try {
     const body = JSON.parse(event.body || '{}');
-    const { userId, username } = body;
+    const { userId, friendId } = body;
 
-    if (!userId || !username) {
-      console.error('Valideringsfel: userId eller username saknas');
+    if (!userId || !friendId) {
+      console.error('❌ Valideringsfel: userId eller friendId saknas');
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'userId och username krävs.' }),
+        body: JSON.stringify({ error: 'userId och friendId krävs.' }),
       };
     }
 
@@ -22,24 +22,25 @@ export const handler = async (event: APIGatewayEvent, context: Context) => {
       TableName: 'UserFriends',
       Item: {
         UserId: userId,
-        Username: username,
+        FriendId: friendId, // Lagra friendId istället för username
         CreatedAt: new Date().toISOString(),
       },
     };
 
-    console.log('Lägger till vän i DynamoDB med params:', JSON.stringify(params));
+    console.log('📝 Lägger till vän i DynamoDB med params:', JSON.stringify(params));
     await dynamoDb.put(params).promise();
-    console.log('Vän tillagd.');
+    console.log('✅ Vän tillagd.');
 
     return {
       statusCode: 201,
       body: JSON.stringify({ message: 'Vän tillagd!' }),
     };
   } catch (error) {
-    console.error('Fel vid tillägg av vän:', error);
+    console.error('❌ Fel vid tillägg av vän:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Något gick fel vid tillägg av vän.' }),
     };
   }
 };
+

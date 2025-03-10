@@ -4,74 +4,90 @@ import { DynamoDB } from 'aws-sdk';
 const dynamoDb = new DynamoDB.DocumentClient();
 
 export const handler = async (event: APIGatewayEvent, context: Context) => {
-  console.log('Event mottaget:', JSON.stringify(event));
+  console.log('🔍 Hämtar vänner, event:', JSON.stringify(event));
 
   try {
-    const httpMethod = event.httpMethod;
+    const userId = event.queryStringParameters?.userId;
 
-    if (httpMethod === 'POST') {
-      // Hantera att lägga till vän
-      const body = JSON.parse(event.body || '{}');
-      const { userId, friendName } = body;
-
-      if (!userId || !friendName) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: 'UserId och FriendName krävs.' }),
-        };
-      }
-
-      const params = {
-        TableName: 'UserFriends',
-        Item: {
-          UserId: userId,
-          Name: friendName,
-          AddedAt: new Date().toISOString(),
-        },
-      };
-
-      await dynamoDb.put(params).promise();
-
+    if (!userId) {
       return {
-        statusCode: 201,
-        body: JSON.stringify({ message: 'Vän tillagd!' }),
-      };
-    } else if (httpMethod === 'GET') {
-      // Hantera att hämta vänner
-      const userId = event.queryStringParameters?.userId;
-
-      if (!userId) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: 'UserId krävs för att hämta vänner.' }),
-        };
-      }
-
-      const params = {
-        TableName: 'UserFriends',
-        KeyConditionExpression: 'UserId = :userId',
-        ExpressionAttributeValues: {
-          ':userId': userId,
-        },
-      };
-
-      const result = await dynamoDb.query(params).promise();
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify(result.Items),
-      };
-    } else {
-      return {
-        statusCode: 405,
-        body: JSON.stringify({ error: 'Metod inte tillåten.' }),
+        statusCode: 400,
+        body: JSON.stringify({ error: 'UserId krävs för att hämta vänner.' }),
       };
     }
+
+    // 🔹 Hämta vänrelationer från UserFriends-tabellen
+    const friendsParams = {
+      TableName: 'UserFriends',
+      FilterExpression: 'UserId = :userId OR FriendId = :userId',
+      ExpressionAttributeValues: {
+        ':userId': userId,
+      },
+    };
+
+    console.log('📌 Hämtar vänrelationer:', JSON.stringify(friendsParams));
+    const friendsResult = await dynamoDb.scan(friendsParams).promise();
+    console.log('📌 Resultat från UserFriends:', JSON.stringify(friendsResult));
+
+    if (!friendsResult.Items || friendsResult.Items.length === 0) {
+      return { statusCode: 200, body: JSON.stringify([]) };
+    }
+
+    // 🔹 Samla alla FriendIds att hämta från GolfUser
+    const friendIds = friendsResult.Items.map((item) =>
+      item.UserId === userId ? item.FriendId : item.UserId
+    );
+
+    console.log('🆔 Vänners UserIds:', JSON.stringify(friendIds));
+
+    if (friendIds.length === 0) {
+      return { statusCode: 200, body: JSON.stringify([]) };
+    }
+
+    // 🔹 Hämta vänners info från GolfUser-tabellen
+    const batchGetParams: DynamoDB.DocumentClient.BatchGetItemInput = {
+      RequestItems: {
+        GolfUser: {
+          Keys: friendIds.map((id) => ({ UserId: id })),
+        },
+      },
+    };
+
+    console.log('🔍 Hämtar vänners info:', JSON.stringify(batchGetParams));
+    const userResults = await dynamoDb.batchGet(batchGetParams).promise();
+    console.log('📌 Användardata från GolfUser:', JSON.stringify(userResults));
+
+    // 🔹 Skapa en map för snabb lookup av vänners info
+    const userMap = new Map();
+    userResults.Responses?.GolfUser?.forEach((user) => {
+      console.log(`🟢 Hämtad vän: ${JSON.stringify(user)}`);
+      userMap.set(user.UserId, {
+        Username: user.Username || "Okänt namn",
+        CurrentHCP: user.CurrentHCP ?? "Okänt",
+      });
+    });
+
+    console.log('📌 Vän-data-mapp:', JSON.stringify([...userMap]));
+
+    // 🔹 Koppla väninfo till UserFriends-resultat
+    const friendsWithDetails = friendsResult.Items.map((friend) => ({
+      UserId: friend.UserId,
+      FriendId: friend.FriendId,
+      Username: userMap.get(friend.FriendId)?.Username || "Okänt namn",
+      CurrentHCP: userMap.get(friend.FriendId)?.CurrentHCP || "Okänt",
+    }));
+
+    console.log('✅ API-svar till frontend:', JSON.stringify(friendsWithDetails));
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(friendsWithDetails),
+    };
   } catch (error) {
-    console.error('Fel i friendHandler:', error);
+    console.error('❌ Fel vid hämtning av vänner:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Ett fel inträffade.' }),
+      body: JSON.stringify({ error: 'Något gick fel vid hämtning av vänner.' }),
     };
   }
 };

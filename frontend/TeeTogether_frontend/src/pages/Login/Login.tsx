@@ -12,7 +12,8 @@ const Login = () => {
   const handleLogin = async () => {
     const response = await loginUser(username, password);
     if (response.token) {
-      localStorage.setItem("token", response.token); // Spara token
+      localStorage.setItem("token", response.token);
+      localStorage.setItem("userId", response.userId); // Spara userId
       navigate("/dashboard"); // Skicka användaren vidare till dashboard
     } else {
       setMessage(response.error || "Inloggning misslyckades");
@@ -35,6 +36,10 @@ const Login = () => {
       />
       <button onClick={handleLogin}>Logga in</button>
       <p>{message}</p>
+
+      {/* Knapp för att navigera till registreringssidan */}
+      <p>Har du inget konto?</p>
+      <button onClick={() => navigate("/")}>Registrera dig</button>
     </div>
   );
 };
