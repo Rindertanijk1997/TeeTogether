@@ -1,38 +1,34 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Register from "./pages/Register/Register";
-import Login from "./pages/Login/Login";
-import Dashboard from "./pages/Dashboard/Dashboard";
-import Friends from "./pages/Friends/Friends";
-import RegisterRound from "./pages/RegisterRound/RegisterRound";
-import Profile from "./pages/Profile/Profile";
-import Nav from "./components/Nav/Nav";
-import Header from "./components/Header/Header";
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Home from './pages/home/Home';
+import Friends from './pages/Friends/Friends';
+import RegisterRound from './pages/RegisterRound/RegisterRound';
+import Profile from './pages/Profile/Profile';
+import Header from './components/Header/Header';
+import Nav from './components/Nav/Nav';
+import { useState, useEffect } from 'react';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!token);
+  }, []);
+
   return (
     <Router>
+      <Header />
       <div className="app-container">
-        {/* Header visas på alla sidor */}
-        <Header /> 
-
-        <div className="content">
-          <Routes>
-            <Route path="/" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/friends" element={<Friends />} />
-            <Route path="/register-round" element={<RegisterRound />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="*" element={<Dashboard />} />
-          </Routes>
-        </div>
-
-        {/* Navigationsfältet visas på alla sidor utom login/register */}
-        <Nav />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/friends" element={isAuthenticated ? <Friends /> : <Navigate to="/profile" />} />
+          <Route path="/register-round" element={isAuthenticated ? <RegisterRound /> : <Navigate to="/profile" />} />
+          <Route path="/profile" element={<Profile setIsAuthenticated={setIsAuthenticated} />} />
+        </Routes>
       </div>
+      <Nav />
     </Router>
   );
 }
 
 export default App;
-

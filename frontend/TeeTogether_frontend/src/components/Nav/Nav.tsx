@@ -1,26 +1,13 @@
-import { NavLink } from "react-router-dom";
-import { FaHome, FaUserFriends, FaEdit, FaUser } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import "./nav.css";
 
 const Nav = () => {
   return (
-    <nav className="nav-container">
-      <NavLink to="/dashboard" className="nav-item">
-        <FaHome />
-        <span>Hem</span>
-      </NavLink>
-      <NavLink to="/friends" className="nav-item">
-        <FaUserFriends />
-        <span>Vänner</span>
-      </NavLink>
-      <NavLink to="/register-round" className="nav-item">
-        <FaEdit />
-        <span>Registrera</span>
-      </NavLink>
-      <NavLink to="/profile" className="nav-item">
-        <FaUser />
-        <span>Profil</span>
-      </NavLink>
+    <nav className="bottom-nav">
+      <Link to="/"><span className="icon">🏠</span></Link>
+      <Link to="/friends"><span className="icon">👥</span></Link>
+      <Link to="/register-round"><span className="icon">✍️</span></Link>
+      <Link to="/profile"><span className="icon">👤</span></Link>
     </nav>
   );
 };

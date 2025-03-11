@@ -1,4 +1,21 @@
+/* 🌿 Grundläggande styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #eaf8e6; /* Ljusgrön bakgrund */
+  margin: 0;
+  padding: 0;
+}
+
+/* Wrapper för appen */
 .app-container {
-  padding-top: 70px; /* Skapa utrymme för headern */
-  padding-bottom: 70px; /* Skapa utrymme för navigationen */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-top: 60px; /* För att inte överlappa med header */
+  padding-bottom: 60px; /* För att inte överlappa med nav */
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
 }
