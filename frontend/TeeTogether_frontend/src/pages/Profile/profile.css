@@ -1,11 +1,11 @@
-.register-round-container {
+.profile-container {
   padding: 20px;
   background-color: #f5f9e9;
   min-height: 100vh;
+  text-align: center;
 }
 
 h2 {
-  text-align: center;
   color: #333;
 }
 
@@ -32,4 +32,12 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.toggle-btn {
+  background-color: transparent;
+  color: black;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 10px;
 }
