@@ -1,122 +1,142 @@
-import { useState, useEffect } from "react";
-import "./profile.css";
+import { useState, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext"; // Se till att importen stämmer
+import "./profile.css"; 
 
-interface ProfileProps {
-  setIsAuthenticated: (isAuth: boolean) => void;
-}
+const BACKEND_URL = "https://w9h1wx1u7l.execute-api.eu-north-1.amazonaws.com";
 
-const Profile = ({ setIsAuthenticated }: ProfileProps) => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [friendsRequests, setFriendsRequests] = useState([]);
-  const [formData, setFormData] = useState({ username: "", password: "", age: "", city: "" });
+const Profile = () => {
+  const { login, logout, userId } = useContext(AuthContext)!; // Hämtar login/logout från context
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [city, setCity] = useState("");
+  const [age, setAge] = useState<number | "">("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsLoggedIn(true);
-    }
-    const userId = localStorage.getItem("userId");
-    if (userId) {
-      fetch(`https://w9h1wx1u7l.execute-api.eu-north-1.amazonaws.com/friends/search?userId=${userId}`)
-        .then((res) => res.json())
-        .then((data) => setFriendsRequests(data.pendingRequests))
-        .catch((error) => console.error("Fel vid hämtning av vänförfrågningar:", error));
-    }
-  }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  // 🟢 Hantera inloggning
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const url = isLogin
-      ? "https://w9h1wx1u7l.execute-api.eu-north-1.amazonaws.com/login"
-      : "https://w9h1wx1u7l.execute-api.eu-north-1.amazonaws.com/users/register";
+    setLoading(true);
+    setError(null);
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    try {
+      const response = await fetch(`${BACKEND_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
 
-    const data = await response.json();
-    if (response.ok) {
-      alert(isLogin ? "Inloggning lyckades!" : "Konto skapat!");
-      if (isLogin) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userId", data.userId);
-        setIsAuthenticated(true);
-        setIsLoggedIn(true);
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("✅ Inloggning lyckades!", data);
+        login(data.token, data.userId); // ✅ Sparar token + userId i AuthContext
+      } else {
+        setError(data.error || "Felaktiga inloggningsuppgifter.");
       }
-    } else {
-      alert(data.error || "Något gick fel.");
+    } catch (error) {
+      setError("Nätverksfel. Kontrollera din internetanslutning.");
     }
+
+    setLoading(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    setIsAuthenticated(false);
-    setIsLoggedIn(false);
-  };
+  // 🟢 Hantera registrering
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-  const acceptFriendRequest = async (friendId: string) => {
-    const userId = localStorage.getItem("userId");
+    try {
+      const response = await fetch(`${BACKEND_URL}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, city, age: Number(age) }),
+      });
 
-    const response = await fetch("https://w9h1wx1u7l.execute-api.eu-north-1.amazonaws.com/friends/accept", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, friendId }),
-    });
+      const data = await response.json();
 
-    if (response.ok) {
-      alert("Vänförfrågan accepterad!");
-      setFriendsRequests(friendsRequests.filter((req: any) => req.FriendId !== friendId));
-    } else {
-      alert("Något gick fel.");
+      if (response.ok) {
+        console.log("✅ Registrering lyckades!", data);
+        login(data.token, data.userId); // ✅ Sparar användaren i AuthContext
+      } else {
+        setError(data.error || "Något gick fel vid registrering.");
+      }
+    } catch (error) {
+      setError("Nätverksfel. Kontrollera din internetanslutning.");
     }
+
+    setLoading(false);
   };
 
   return (
     <div className="profile-container">
-      {isLoggedIn ? (
-        <button onClick={handleLogout}>Logga ut</button>
+      {userId ? (
+        <div>
+          <h2>Välkommen!</h2>
+          <button onClick={logout}>Logga ut</button>
+        </div>
       ) : (
-        <>
-          <h2>{isLogin ? "Logga in" : "Registrera"}</h2>
-          <form onSubmit={handleSubmit}>
-            <label>Namn:</label>
-            <input type="text" name="username" value={formData.username} onChange={handleChange} required />
+        <div>
+          <h2>{isRegistering ? "Skapa konto" : "Logga in"}</h2>
+          <form onSubmit={isRegistering ? handleRegister : handleLogin}>
+            <label>
+              Användarnamn:
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </label>
 
-            <label>Lösenord:</label>
-            <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+            <label>
+              Lösenord:
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </label>
 
-            {!isLogin && (
+            {isRegistering && (
               <>
-                <label>Ålder:</label>
-                <input type="number" name="age" value={formData.age} onChange={handleChange} required />
+                <label>
+                  Stad:
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    required
+                  />
+                </label>
 
-                <label>Stad:</label>
-                <input type="text" name="city" value={formData.city} onChange={handleChange} required />
+                <label>
+                  Ålder:
+                  <input
+                    type="number"
+                    value={age}
+                    onChange={(e) => setAge(e.target.value === "" ? "" : Number(e.target.value))}
+                    required
+                  />
+                </label>
               </>
             )}
 
-            <button type="submit">{isLogin ? "Logga in" : "Skapa konto"}</button>
+            {error && <p className="error">{error}</p>}
+            <button type="submit" disabled={loading}>
+              {loading ? "Laddar..." : isRegistering ? "Registrera dig" : "Logga in"}
+            </button>
           </form>
-          <button onClick={() => setIsLogin(!isLogin)} className="toggle-btn">
-            {isLogin ? "Registrera istället" : "Har redan ett konto? Logga in"}
-          </button>
-        </>
-      )}
 
-      {friendsRequests.length > 0 && (
-        <div className="friend-requests">
-          <h3>Vänförfrågningar</h3>
-          {friendsRequests.map((req: any) => (
-            <button key={req.FriendId} onClick={() => acceptFriendRequest(req.FriendId)}>Acceptera {req.Username}</button>
-          ))}
+          <p>
+            {isRegistering ? "Har du redan ett konto?" : "Har du inget konto?"}{" "}
+            <button onClick={() => setIsRegistering(!isRegistering)}>
+              {isRegistering ? "Logga in här" : "Registrera dig här"}
+            </button>
+          </p>
         </div>
       )}
     </div>

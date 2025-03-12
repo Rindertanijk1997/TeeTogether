@@ -11,57 +11,31 @@ export const handler = async (event: APIGatewayEvent) => {
     const { userId, friendId } = body;
 
     if (!userId || !friendId) {
-      console.error("❌ userId eller friendId saknas");
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "userId och friendId krävs." }),
-      };
+      return { statusCode: 400, body: JSON.stringify({ error: "userId och friendId krävs." }) };
     }
 
     // 🔹 Ta bort vänförfrågan från FriendRequests
     const deleteParams = {
       TableName: "FriendRequests",
-      Key: {
-        RequesterId: friendId,
-        FriendId: userId,
-      },
+      Key: { RequesterId: friendId, FriendId: userId },
     };
-
-    console.log("🗑 Tar bort vänförfrågan:", JSON.stringify(deleteParams));
     await dynamoDb.delete(deleteParams).promise();
 
-    // 🔹 Lägg till vänrelation i UserFriends för båda användarna
-    const putParams1 = {
-      TableName: "UserFriends",
-      Item: {
-        UserId: userId,
-        FriendId: friendId,
-        CreatedAt: new Date().toISOString(),
+    // 🔹 Lägg till vänrelation i UserFriends för **båda** användarna
+    const batchWriteParams = {
+      RequestItems: {
+        UserFriends: [
+          { PutRequest: { Item: { UserId: userId, FriendId: friendId, CreatedAt: new Date().toISOString() } } },
+          { PutRequest: { Item: { UserId: friendId, FriendId: userId, CreatedAt: new Date().toISOString() } } },
+        ],
       },
     };
 
-    const putParams2 = {
-      TableName: "UserFriends",
-      Item: {
-        UserId: friendId,
-        FriendId: userId,
-        CreatedAt: new Date().toISOString(),
-      },
-    };
+    await dynamoDb.batchWrite(batchWriteParams).promise();
 
-    console.log("📌 Lägger till vänrelation:", JSON.stringify(putParams1));
-    await dynamoDb.put(putParams1).promise();
-    await dynamoDb.put(putParams2).promise();
-
-    return {
-      statusCode: 201,
-      body: JSON.stringify({ message: "Vänförfrågan accepterad!" }),
-    };
+    return { statusCode: 201, body: JSON.stringify({ message: "Vänförfrågan accepterad!" }) };
   } catch (error) {
     console.error("❌ Fel vid acceptans av vänförfrågan:", error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Något gick fel vid acceptans av vänförfrågan." }),
-    };
+    return { statusCode: 500, body: JSON.stringify({ error: "Något gick fel vid acceptans av vänförfrågan." }) };
   }
 };

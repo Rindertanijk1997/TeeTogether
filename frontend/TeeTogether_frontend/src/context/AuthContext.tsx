@@ -1,36 +1,44 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useState, ReactNode, useEffect } from "react";
 
-type AuthContextType = {
+interface AuthContextType {
   userId: string | null;
-  isAuthenticated: boolean;
-  login: (userId: string) => void;
+  token: string | null;
+  login: (token: string, userId: string) => void;
   logout: () => void;
-};
+}
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [userId, setUserId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(localStorage.getItem("userId"));
+  const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
 
-  const login = (newUserId: string) => {
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    const storedToken = localStorage.getItem("token");
+    if (storedUserId && storedToken) {
+      setUserId(storedUserId);
+      setToken(storedToken);
+    }
+  }, []);
+
+  const login = (newToken: string, newUserId: string) => {
+    setToken(newToken);
     setUserId(newUserId);
+    localStorage.setItem("token", newToken);
+    localStorage.setItem("userId", newUserId);
   };
 
   const logout = () => {
+    setToken(null);
     setUserId(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
   };
 
   return (
-    <AuthContext.Provider value={{ userId, isAuthenticated: !!userId, login, logout }}>
+    <AuthContext.Provider value={{ userId, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };
