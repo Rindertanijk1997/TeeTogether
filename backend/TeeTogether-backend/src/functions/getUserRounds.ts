@@ -1,15 +1,16 @@
-import { APIGatewayEvent, Context } from "aws-lambda";
+import { APIGatewayEvent } from "aws-lambda";
 import { DynamoDB } from "aws-sdk";
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
-export const handler = async (event: APIGatewayEvent, context: Context) => {
-  console.log("Hämtar ronder, event:", JSON.stringify(event));
+export const handler = async (event: APIGatewayEvent) => {
+  console.log("🔹 Hämtar senaste ronder, event:", JSON.stringify(event));
 
   try {
-    const userId = event.queryStringParameters?.userId; // 🔹 Hämta userId från query-parametern
+    const userId = event.queryStringParameters?.userId;
 
     if (!userId) {
+      console.error("❌ Ingen userId angiven!");
       return {
         statusCode: 400,
         body: JSON.stringify({ error: "UserId krävs!" }),
@@ -17,34 +18,28 @@ export const handler = async (event: APIGatewayEvent, context: Context) => {
     }
 
     const params = {
-      TableName: "GolfUser", // 🔹 Se till att tabellnamnet är korrekt!
-      KeyConditionExpression: "UserId = :userId",
-      ExpressionAttributeValues: {
-        ":userId": userId,
-      },
+      TableName: "GolfUser",
+      Key: { UserId: userId },
     };
 
-    console.log("Hämtar ronder från DynamoDB med params:", JSON.stringify(params));
-    const result = await dynamoDb.query(params).promise();
-    
-    if (!result.Items) {
+    console.log("📌 Hämtar användardata från DynamoDB:", JSON.stringify(params));
+    const result = await dynamoDb.get(params).promise();
+
+    if (!result.Item) {
+      console.error("❌ Användaren hittades inte!");
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: "Inga ronder hittades!" }),
+        body: JSON.stringify({ error: "Användaren hittades inte!" }),
       };
     }
 
+    console.log("✅ Ronder hämtade!");
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-      },
-      body: JSON.stringify(result.Items),
+      body: JSON.stringify(result.Item.LatestRounds || []),
     };
   } catch (error) {
-    console.error("Fel vid hämtning av ronder:", error);
+    console.error("❌ Fel vid hämtning av ronder:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Något gick fel vid hämtning av ronder." }),
