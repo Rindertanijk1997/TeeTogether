@@ -4,6 +4,7 @@ import "./Friends.css";
 const BACKEND_URL = "https://w9h1wx1u7l.execute-api.eu-north-1.amazonaws.com";
 
 interface User {
+  FriendId: string;
   UserId: string;
   Username: string;
   CurrentHCP: string;
@@ -29,11 +30,13 @@ function Friends() {
 
   useEffect(() => {
     if (userId) {
-      fetchFriends();
+      fetchFriends().then(() => {
+        fetchUsers();
+      });
       fetchFriendRequests();
-      fetchUsers();
     }
   }, [userId]);
+  
 
   const fetchFriends = async () => {
     try {
@@ -75,19 +78,40 @@ function Friends() {
   
   const fetchUsers = async () => {
     try {
+      console.log("🔄 Hämtar användare...");
       const response = await fetch(`${BACKEND_URL}/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error("Kunde inte hämta användare.");
       const data = await response.json();
-      setUsers(data.filter((user: User) => user.UserId !== userId));
+  
+      console.log("📌 Alla användare från API:", data);
+      console.log("📌 Mina vänner:", friends);
+  
+      // ✅ Filtrera bort befintliga vänner och användaren själv
+      const filteredUsers = data.filter((user: User) => {
+        const isFriend = friends.some(
+          (friend) => friend.FriendId === user.UserId || friend.UserId === user.UserId
+        );
+        return user.UserId !== userId && !isFriend;
+      });
+  
+      console.log("📌 Potentiella vänner efter filtrering:", filteredUsers);
+      setUsers(filteredUsers);
     } catch (error) {
       console.error("❌ Fel vid hämtning av användare:", error);
     }
   };
+  
+
   console.log("📝 Renderar vänförfrågningar:", friendRequests);
 
-  const sendFriendRequest = async (friendId: string) => {
+  const sendFriendRequest = async (friendId?: string) => {
+    if (!friendId) {
+      console.error("❌ Kan inte skicka vänförfrågan utan ett giltigt UserId.");
+      return;
+    }
+  
     try {
       console.log("📌 Skickar vänförfrågan till:", friendId);
       const response = await fetch(`${BACKEND_URL}/friends/request`, {
@@ -98,18 +122,20 @@ function Friends() {
         },
         body: JSON.stringify({ userId, friendId }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Kunde inte skicka vänförfrågan.");
       }
-
+  
       console.log("✅ Vänförfrågan skickad!");
-      fetchFriendRequests(); // Uppdatera listan
+      fetchFriendRequests(); // Uppdatera listan med vänförfrågningar
+      fetchUsers(); // Uppdatera listan med potentiella vänner
     } catch (error) {
       console.error("❌ Fel vid skickande av vänförfrågan:", error);
     }
   };
+  
 
   const acceptFriendRequest = async (friendId: string) => {
     try {

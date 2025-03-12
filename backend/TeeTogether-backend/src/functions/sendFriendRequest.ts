@@ -14,17 +14,31 @@ export const handler = async (event: APIGatewayEvent) => {
       return { statusCode: 400, body: JSON.stringify({ error: "userId och friendId krävs." }) };
     }
 
-    const checkParams = {
-      TableName: "FriendRequests",
-      KeyConditionExpression: "RequesterId = :userId AND FriendId = :friendId",
+    // 🔹 Kolla om de redan är vänner
+    const checkFriendshipParams = {
+      TableName: "UserFriends",
+      FilterExpression: "(UserId = :userId AND FriendId = :friendId) OR (UserId = :friendId AND FriendId = :userId)",
       ExpressionAttributeValues: { ":userId": userId, ":friendId": friendId },
     };
 
-    const existingRequest = await dynamoDb.query(checkParams).promise();
+    const friendshipResult = await dynamoDb.scan(checkFriendshipParams).promise();
+    if (friendshipResult.Items?.length) {
+      return { statusCode: 400, body: JSON.stringify({ error: "Ni är redan vänner." }) };
+    }
+
+    // 🔹 Kolla om det redan finns en vänförfrågan
+    const checkRequestParams = {
+      TableName: "FriendRequests",
+      FilterExpression: "(RequesterId = :userId AND FriendId = :friendId) OR (RequesterId = :friendId AND FriendId = :userId)",
+      ExpressionAttributeValues: { ":userId": userId, ":friendId": friendId },
+    };
+
+    const existingRequest = await dynamoDb.scan(checkRequestParams).promise();
     if (existingRequest.Items?.length) {
       return { statusCode: 400, body: JSON.stringify({ error: "Vänförfrågan finns redan." }) };
     }
 
+    // 🔹 Skapa vänförfrågan
     const params = {
       TableName: "FriendRequests",
       Item: {
