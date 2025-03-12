@@ -10,30 +10,21 @@ export const handler = async (event: APIGatewayEvent) => {
     const userId = event.queryStringParameters?.userId;
 
     if (!userId) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "UserId krävs för att hämta vänner." }),
-      };
+      return { statusCode: 400, body: JSON.stringify({ error: "UserId krävs." }) };
     }
 
-    // 🔹 Hämta vänrelationer från UserFriends
     const friendsParams = {
       TableName: "UserFriends",
       FilterExpression: "UserId = :userId",
-      ExpressionAttributeValues: {
-        ":userId": userId,
-      },
+      ExpressionAttributeValues: { ":userId": userId },
     };
 
     const friendsResult = await dynamoDb.scan(friendsParams).promise();
-    console.log("📌 Vänrelationer:", JSON.stringify(friendsResult));
+    const friendIds = friendsResult.Items?.map((item) => item.FriendId) || [];
 
-    if (!friendsResult.Items || friendsResult.Items.length === 0) {
+    if (friendIds.length === 0) {
       return { statusCode: 200, body: JSON.stringify([]) };
     }
-
-    // 🔹 Hämta vänners info från GolfUser
-    const friendIds = friendsResult.Items.map((item) => item.FriendId);
 
     const batchGetParams: DynamoDB.DocumentClient.BatchGetItemInput = {
       RequestItems: {
@@ -44,31 +35,11 @@ export const handler = async (event: APIGatewayEvent) => {
     };
 
     const userResults = await dynamoDb.batchGet(batchGetParams).promise();
-    console.log("📌 Väninfo:", JSON.stringify(userResults));
+    const friendsWithDetails = userResults.Responses?.GolfUser || [];
 
-    const userMap = new Map();
-    userResults.Responses?.GolfUser?.forEach((user) => {
-      userMap.set(user.UserId, {
-        Username: user.Username || "Okänt namn",
-        CurrentHCP: user.CurrentHCP ?? "Okänt",
-      });
-    });
-
-    const friendsWithDetails = friendsResult.Items.map((friend) => ({
-      FriendId: friend.FriendId,
-      Username: userMap.get(friend.FriendId)?.Username || "Okänt namn",
-      CurrentHCP: userMap.get(friend.FriendId)?.CurrentHCP || "Okänt",
-    }));
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(friendsWithDetails),
-    };
+    return { statusCode: 200, body: JSON.stringify(friendsWithDetails) };
   } catch (error) {
     console.error("❌ Fel vid hämtning av vänner:", error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Något gick fel vid hämtning av vänner." }),
-    };
+    return { statusCode: 500, body: JSON.stringify({ error: "Något gick fel." }) };
   }
 };

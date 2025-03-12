@@ -1,43 +1,39 @@
 .profile-container {
-  padding: 20px;
-  background-color: #f5f9e9;
-  min-height: 100vh;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  gap: 15px;
 }
 
-h2 {
-  color: #333;
-}
-
-form {
+.login-form {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-label {
-  font-weight: bold;
-}
-
-input {
+.login-form input {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
-button {
+.login-form button,
+.logout-button {
   padding: 10px;
-  background-color: black;
+  background-color: #333;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.toggle-btn {
-  background-color: transparent;
-  color: black;
-  text-decoration: underline;
-  cursor: pointer;
-  margin-top: 10px;
+.login-form button:hover,
+.logout-button:hover {
+  background-color: #555;
+}
+
+.error {
+  color: red;
 }

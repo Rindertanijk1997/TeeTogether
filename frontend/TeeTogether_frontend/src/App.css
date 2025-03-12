@@ -19,3 +19,22 @@ body {
   flex-grow: 1;
   padding: 20px;
 }
+button {
+  background-color: #007bff; /* Blå bakgrund */
+  color: white; /* Vit text */
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3; /* Mörkare blå vid hover */
+}
+
+button:disabled {
+  background-color: #cccccc; /* Grå bakgrund om inaktiverad */
+  cursor: not-allowed;
+}

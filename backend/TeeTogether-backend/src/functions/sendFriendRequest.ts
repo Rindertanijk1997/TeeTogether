@@ -11,33 +11,20 @@ export const handler = async (event: APIGatewayEvent) => {
     const { userId, friendId } = body;
 
     if (!userId || !friendId) {
-      console.error("❌ userId eller friendId saknas");
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "userId och friendId krävs." }),
-      };
+      return { statusCode: 400, body: JSON.stringify({ error: "userId och friendId krävs." }) };
     }
 
-    // 🔹 Kolla om förfrågan redan existerar
     const checkParams = {
       TableName: "FriendRequests",
       KeyConditionExpression: "RequesterId = :userId AND FriendId = :friendId",
-      ExpressionAttributeValues: {
-        ":userId": userId,
-        ":friendId": friendId,
-      },
+      ExpressionAttributeValues: { ":userId": userId, ":friendId": friendId },
     };
 
     const existingRequest = await dynamoDb.query(checkParams).promise();
-
-    if (existingRequest.Items && existingRequest.Items.length > 0) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "Vänförfrågan har redan skickats." }),
-      };
+    if (existingRequest.Items?.length) {
+      return { statusCode: 400, body: JSON.stringify({ error: "Vänförfrågan finns redan." }) };
     }
 
-    // 🔹 Lägg till en ny vänförfrågan
     const params = {
       TableName: "FriendRequests",
       Item: {
@@ -48,18 +35,10 @@ export const handler = async (event: APIGatewayEvent) => {
       },
     };
 
-    console.log("📌 Sparar vänförfrågan:", JSON.stringify(params));
     await dynamoDb.put(params).promise();
-
-    return {
-      statusCode: 201,
-      body: JSON.stringify({ message: "Vänförfrågan skickad!" }),
-    };
+    return { statusCode: 201, body: JSON.stringify({ message: "Vänförfrågan skickad!" }) };
   } catch (error) {
     console.error("❌ Fel vid vänförfrågan:", error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Något gick fel vid vänförfrågan." }),
-    };
+    return { statusCode: 500, body: JSON.stringify({ error: "Något gick fel." }) };
   }
 };
