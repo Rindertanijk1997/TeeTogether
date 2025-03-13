@@ -1,13 +1,15 @@
-/* 🏷️ Header */
 .header {
-  background-color: black;
-  color: white;
-  text-align: center;
-  padding: 15px;
-  font-size: 20px;
-  font-weight: bold;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 10;
+  width: 100%; 
+  height: auto; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; 
 }
+
+.header-img {
+  width: 100%; 
+  height: auto; 
+  object-fit: cover; 
+}
+

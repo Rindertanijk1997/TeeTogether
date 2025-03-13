@@ -11,9 +11,13 @@
 
 .bottom-nav a {
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.icon {
-  font-size: 24px;
-  color: white;
+.nav-icon {
+  width: 40px;  
+  height: 40px; 
+  object-fit: contain; 
 }

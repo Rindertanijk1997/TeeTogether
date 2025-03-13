@@ -3,6 +3,23 @@ import { DynamoDB } from "aws-sdk";
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
+const calculateNewHCP = (currentHCP: number, score: number): number => {
+  const targetScore = 36;
+  const hcpAdjustmentFactor = 0.8;
+
+  let newHCP = currentHCP;
+
+  if (score > targetScore) {
+    const diff = score - targetScore;
+    newHCP -= diff * hcpAdjustmentFactor * 0.1;
+  } else if (score < targetScore) {
+    const diff = targetScore - score;
+    newHCP += diff * hcpAdjustmentFactor * 0.1;
+  }
+
+  return parseFloat(newHCP.toFixed(2));
+};
+
 export const handler = async (event: APIGatewayEvent) => {
   console.log("🔹 Registrerar rond, event:", JSON.stringify(event));
 
@@ -11,36 +28,31 @@ export const handler = async (event: APIGatewayEvent) => {
     console.log("📌 Parsed body:", body);
 
     const { userId, course, score } = body;
-    
+
     if (!userId || !course || score === undefined) {
-      console.error("❌ Valideringsfel: UserId, course och score krävs");
       return {
         statusCode: 400,
         body: JSON.stringify({ error: "UserId, course och score krävs." }),
       };
     }
 
-    // 🔹 Beräkna nytt HCP automatiskt
-    const newHCP = Math.max(0, score > 36 ? score * 0.95 : score * 1.05); // Exempelberäkning
-    console.log("📌 Beräknat nytt HCP:", newHCP);
-
-    // 🔹 Hämta användarens befintliga rundor
-    const getUserParams = {
+    // Hämta nuvarande HCP från databasen
+    const userParams = {
       TableName: "GolfUser",
       Key: { UserId: userId },
     };
-    console.log("📌 Hämtar användardata med params:", JSON.stringify(getUserParams));
-    const userData = await dynamoDb.get(getUserParams).promise();
+    const userData = await dynamoDb.get(userParams).promise();
 
-    if (!userData.Item) {
-      console.error("❌ Användaren hittades inte!");
+    if (!userData.Item || userData.Item.CurrentHCP === undefined) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: "Användaren hittades inte!" }),
+        body: JSON.stringify({ error: "Användaren hittades inte eller saknar HCP!" }),
       };
     }
 
-    // 🔹 Uppdatera senaste rundor
+    const currentHCP = userData.Item.CurrentHCP;
+    const newHCP = calculateNewHCP(currentHCP, score);
+
     const latestRounds = userData.Item.LatestRounds || [];
     latestRounds.unshift({
       Course: course,
@@ -49,7 +61,7 @@ export const handler = async (event: APIGatewayEvent) => {
       Date: new Date().toISOString(),
     });
 
-    if (latestRounds.length > 5) latestRounds.pop(); // Endast 5 senaste rundorna sparas
+    if (latestRounds.length > 5) latestRounds.pop();
 
     const updateParams = {
       TableName: "GolfUser",
@@ -62,10 +74,8 @@ export const handler = async (event: APIGatewayEvent) => {
       ReturnValues: "UPDATED_NEW",
     };
 
-    console.log("📌 Uppdaterar användardata i DynamoDB:", JSON.stringify(updateParams));
     await dynamoDb.update(updateParams).promise();
 
-    console.log("✅ Rond registrerad!");
     return {
       statusCode: 200,
       body: JSON.stringify({
