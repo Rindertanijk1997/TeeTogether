@@ -15,15 +15,21 @@ function RegisterRound() {
   const [score, setScore] = useState<number | "">("");
   const [rounds, setRounds] = useState<Round[]>([]);
   const [loading, setLoading] = useState(false);
-  
+
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    if (userId) fetchRounds();
+    if (userId) {
+      const storedRounds = localStorage.getItem(`rounds-${userId}`);
+      if (storedRounds) {
+        setRounds(JSON.parse(storedRounds)); // Ladda sparade ronder direkt
+      }
+      fetchRounds(); // Hämta uppdaterad data i bakgrunden
+    }
   }, [userId]);
 
-  // 🔹 Hämta senaste ronder och uppdaterat HCP
+  // 🔹 Hämta senaste ronder och spara i localStorage
   const fetchRounds = async () => {
     try {
       setLoading(true);
@@ -32,7 +38,10 @@ function RegisterRound() {
       });
       if (!response.ok) throw new Error("Kunde inte hämta ronder.");
       const data = await response.json();
-      setRounds(data.slice(-5)); // Visa endast de 5 senaste rundorna
+      const latestRounds = data.slice(-5); // Visa endast de 5 senaste rundorna
+
+      setRounds(latestRounds);
+      localStorage.setItem(`rounds-${userId}`, JSON.stringify(latestRounds)); // ✅ Spara i localStorage
     } catch (error) {
       console.error("❌ Fel vid hämtning av ronder:", error);
     } finally {
