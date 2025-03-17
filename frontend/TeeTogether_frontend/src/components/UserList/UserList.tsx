@@ -33,16 +33,7 @@ function UserList({ users, searchTerm, onSearch, onSelect, onSendRequest, sentRe
               <p>{user.Age} år</p>
               <p>HCP: {user.CurrentHCP}</p>
 
-              <button
-                className={sentRequests.includes(user.UserId) ? "sent-request" : "send-request"}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSendRequest(user.UserId);
-                }}
-                disabled={sentRequests.includes(user.UserId)}
-              >
-                {sentRequests.includes(user.UserId) ? "Förfrågan skickad" : "➕ Lägg till vän"}
-              </button>
+              
             </div>
           ))}
       </div>
