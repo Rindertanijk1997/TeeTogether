@@ -1,0 +1,31 @@
+.friend-requests {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .request-item {
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+  }
+  
+  .request-item button {
+    background: green;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .request-item button:hover {
+    background: darkgreen;
+  }
+  
