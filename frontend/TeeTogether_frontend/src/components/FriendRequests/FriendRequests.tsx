@@ -1,22 +1,23 @@
-import "../../components/FriendRequests/FriendRequests.css";
+import "./FriendRequests.css";
 
 interface Props {
-  friendRequests: { RequesterId: string; FriendId: string; Username: string; CurrentHCP: string }[];
-  onAccept: () => void;
+  friendRequests: { RequesterId: string; Username: string; CurrentHCP: string }[];
+  onAccept: (friendId: string) => void;
 }
 
 function FriendRequests({ friendRequests, onAccept }: Props) {
   return (
-    <div className="friends-list">
+    <div className="friend-requests">
       <h3>Vänförfrågningar</h3>
       {friendRequests.length > 0 ? (
-        friendRequests.map(req => (
-          <div key={req.RequesterId} className="user-row">
-            <p>{req.Username}</p>
-            <p>HCP: {req.CurrentHCP}</p>
-            <button onClick={() => onAccept()}>✔ Acceptera</button>
-          </div>
-        ))
+        <ul>
+          {friendRequests.map((req) => (
+            <li key={req.RequesterId}>
+              <p>{req.Username} (HCP: {req.CurrentHCP})</p>
+              <button onClick={() => onAccept(req.RequesterId)}>✔ Acceptera</button>
+            </li>
+          ))}
+        </ul>
       ) : (
         <p>Inga vänförfrågningar.</p>
       )}

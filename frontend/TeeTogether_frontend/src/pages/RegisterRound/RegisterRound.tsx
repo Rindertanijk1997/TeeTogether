@@ -41,7 +41,7 @@ function RegisterRound() {
       const latestRounds = data.slice(-5); // Visa endast de 5 senaste rundorna
 
       setRounds(latestRounds);
-      localStorage.setItem(`rounds-${userId}`, JSON.stringify(latestRounds)); // ✅ Spara i localStorage
+      localStorage.setItem(`rounds-${userId}`, JSON.stringify(latestRounds)); 
     } catch (error) {
       console.error("❌ Fel vid hämtning av ronder:", error);
     } finally {

@@ -5,6 +5,7 @@
   justify-content: center;
   height: 80vh;
   gap: 15px;
+  background-color: #d0f0c0;
 }
 
 .login-form {

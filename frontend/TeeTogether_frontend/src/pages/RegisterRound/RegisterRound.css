@@ -1,7 +1,9 @@
 .register-round-container {
   max-width: 400px;
-  margin: auto;
+  height: 100vh ;
+  margin: 0 auto;
   text-align: center;
+  background-color: #d0f0c0;
 }
 
 form {

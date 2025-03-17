@@ -29,7 +29,7 @@ function Friends() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showFriends, setShowFriends] = useState(true);
-  const [sentRequests, setSentRequests] = useState<string[]>([]); // ✅ State för skickade vänförfrågningar
+  const [sentRequests, setSentRequests] = useState<string[]>([]);
 
   const token = localStorage.getItem("token") || "";
   const userId = localStorage.getItem("userId") || "";
@@ -99,7 +99,7 @@ function Friends() {
 
       const filteredUsers = data.filter((user: User) => {
         const isFriend = updatedFriends.some((friend: User) => friend.UserId === user.UserId);
-        const hasPendingRequest = updatedRequests.some((req: FriendRequest) => req.RequesterId === user.UserId);
+        const hasPendingRequest = updatedRequests.some((req: FriendRequest) => req.FriendId === user.UserId);
         return !isFriend && !hasPendingRequest && user.UserId !== userId;
       });
 
@@ -130,12 +130,56 @@ function Friends() {
       }
 
       console.log("✅ Vänförfrågan skickad!");
-      setSentRequests((prev) => [...prev, friendId]); // 🔹 Lägg till i skickade förfrågningar
+      setSentRequests((prev) => [...prev, friendId]);
       fetchFriendRequests();
     } catch (error) {
       console.error("❌ Fel vid skickande av vänförfrågan:", error);
     }
   };
+
+  const acceptFriendRequest = async (friendId: string) => {
+    try {
+      if (!friendId) {
+        console.error("❌ Kan inte acceptera vänförfrågan utan giltigt UserId.");
+        return;
+      }
+  
+      console.log("📌 Accepterar vänförfrågan från:", friendId);
+      const response = await fetch(`${BACKEND_URL}/friends/accept`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ userId, friendId }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Något gick fel vid acceptans av vänförfrågan.");
+      }
+  
+      console.log("✅ Vänförfrågan accepterad!");
+  
+      // 🟢 Uppdatera localStorage och state
+      const updatedRequests = friendRequests.filter(req => req.RequesterId !== friendId);
+      setFriendRequests(updatedRequests);
+      localStorage.setItem("friendRequests", JSON.stringify(updatedRequests));
+  
+      const newFriend = users.find(user => user.UserId === friendId);
+      if (newFriend) {
+        const updatedFriends = [...friends, newFriend];
+        setFriends(updatedFriends);
+        localStorage.setItem("friends", JSON.stringify(updatedFriends));
+      }
+  
+      fetchFriends(); // ✅ Hämta senaste vänner
+      fetchFriendRequests(); // ✅ Hämta senaste förfrågningar
+    } catch (error) {
+      console.error("❌ Fel vid accepterande av vänförfrågan:", error);
+    }
+  };
+  
 
   return (
     <div className="friends-container">
@@ -147,7 +191,8 @@ function Friends() {
       {showFriends ? (
         <>
           <FriendList friends={friends} onSelect={setSelectedUser} />
-          <FriendRequests friendRequests={friendRequests} onAccept={fetchFriends} />
+          <FriendRequests friendRequests={friendRequests} onAccept={acceptFriendRequest} />
+
         </>
       ) : (
         <UserList 
@@ -162,10 +207,12 @@ function Friends() {
 
       {selectedUser && (
         <UserOverlay
-                  user={selectedUser}
-                  onClose={() => setSelectedUser(null)}
-                  onSendRequest={sendFriendRequest}
-                  isFriend={friends.some(friend => friend.UserId === selectedUser.UserId)} sentRequests={[]}        />
+          user={selectedUser}
+          onClose={() => setSelectedUser(null)}
+          onSendRequest={sendFriendRequest}
+          isFriend={friends.some(friend => friend.UserId === selectedUser.UserId)}
+          sentRequests={sentRequests}
+        />
       )}
     </div>
   );
