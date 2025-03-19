@@ -42,21 +42,20 @@ const Profile = () => {
     setLoading(false);
   };
 
-  // 🟢 Hantera registrering
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
+  
     try {
-      const response = await fetch(`${BACKEND_URL}/register`, {
+      const response = await fetch(`${BACKEND_URL}/users/register`, { // ✅ RÄTT URL
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password, city, age: Number(age) }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         console.log("✅ Registrering lyckades!", data);
         login(data.token, data.userId); // ✅ Sparar användaren i AuthContext
@@ -66,9 +65,10 @@ const Profile = () => {
     } catch (error) {
       setError("Nätverksfel. Kontrollera din internetanslutning.");
     }
-
+  
     setLoading(false);
   };
+  
 
   return (
     <div className="profile-container">

@@ -28,6 +28,7 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  padding: 1rem;
 }
 
 .login-form button:hover,
