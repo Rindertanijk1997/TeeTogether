@@ -11,6 +11,7 @@ const Profile = () => {
   const [password, setPassword] = useState("");
   const [city, setCity] = useState("");
   const [age, setAge] = useState<number | "">("");
+  const [initialHCP, setInitialHCP] = useState<number | "">(""); // 🟢 Lägger till HCP-fält
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -42,20 +43,33 @@ const Profile = () => {
     setLoading(false);
   };
 
+  // 🟢 Hantera registrering
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-  
+
+    if (initialHCP === "" || age === "") {
+      setError("Alla fält måste fyllas i!");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch(`${BACKEND_URL}/users/register`, { // ✅ RÄTT URL
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, city, age: Number(age) }),
+        body: JSON.stringify({
+          username,
+          password,
+          city,
+          age: Number(age),
+          initialHCP: Number(initialHCP), // 🟢 Skickar HCP till backend
+        }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         console.log("✅ Registrering lyckades!", data);
         login(data.token, data.userId); // ✅ Sparar användaren i AuthContext
@@ -65,10 +79,9 @@ const Profile = () => {
     } catch (error) {
       setError("Nätverksfel. Kontrollera din internetanslutning.");
     }
-  
+
     setLoading(false);
   };
-  
 
   return (
     <div className="profile-container">
@@ -119,6 +132,17 @@ const Profile = () => {
                     type="number"
                     value={age}
                     onChange={(e) => setAge(e.target.value === "" ? "" : Number(e.target.value))}
+                    required
+                  />
+                </label>
+
+                <label>
+                  Handicap (HCP): {/* 🟢 Nytt fält för HCP */}
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={initialHCP}
+                    onChange={(e) => setInitialHCP(e.target.value === "" ? "" : Number(e.target.value))}
                     required
                   />
                 </label>
