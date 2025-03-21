@@ -7,7 +7,7 @@ interface Props {
 
 function FriendList({ friends, onSelect }: Props) {
   return (
-    <div className="friends-list">
+    <div className="users-list">
       <h3>Mina vänner</h3>
       {friends.length > 0 ? (
         friends.map(friend => (

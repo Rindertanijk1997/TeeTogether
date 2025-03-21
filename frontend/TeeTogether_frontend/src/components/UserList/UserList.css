@@ -12,7 +12,7 @@
   .search-input {
     width: 90%;
     padding: 10px;
-    margin: 10px 0;
+    margin: 0 auto;
     border-radius: 5px;
     border: 1px solid #ccc;
     font-size: 16px;
@@ -25,7 +25,7 @@
   
   /* Styling för användarkort */
   .user-row {
-    background: white;
+    background: #d0f0c0;
     padding: 12px;
     border-radius: 8px;
     width: 90%;
@@ -36,6 +36,7 @@
     border: 1px solid #ccc;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     transition: background 0.3s ease, transform 0.2s ease;
+    border: 1px solid rgb(0, 58, 0);
   }
   
   .user-row:hover {

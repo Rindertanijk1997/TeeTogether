@@ -4,6 +4,7 @@ import FriendRequests from "../../components/FriendRequests/FriendRequests";
 import UserList from "../../components/UserList/UserList";
 import UserOverlay from "../../components/UserOverlay/UserOverlay";
 import "./Friends.css";
+import { AnimatePresence, motion } from "framer-motion";
 
 const BACKEND_URL = "https://w9h1wx1u7l.execute-api.eu-north-1.amazonaws.com";
 
@@ -182,17 +183,23 @@ function Friends() {
   
 
   return (
-    <div className="friends-container">
-      <h2>Hitta Vänner</h2>
-      <button onClick={() => setShowFriends(!showFriends)} className="toggle-button">
-        {showFriends ? "Visa alla användare" : "Visa mina vänner"}
-      </button>
+    <motion.div className="friends-container">
+    <motion.h1 className="friends-title">Vem tar du med dig ut på tee idag?</motion.h1>
 
+    <motion.button 
+      onClick={() => setShowFriends(!showFriends)}
+      className="toggle-button"
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+    >
+      {showFriends ? "Visa alla golfare" : "Visa mina golfvänner"}
+    </motion.button>
+
+    <motion.div className="friends-content">
       {showFriends ? (
         <>
           <FriendList friends={friends} onSelect={setSelectedUser} />
           <FriendRequests friendRequests={friendRequests} onAccept={acceptFriendRequest} />
-
         </>
       ) : (
         <UserList 
@@ -201,10 +208,12 @@ function Friends() {
           onSearch={setSearchTerm} 
           onSelect={setSelectedUser} 
           onSendRequest={sendFriendRequest} 
-          sentRequests={sentRequests} // 🔹 Skickade vänförfrågningar
+          sentRequests={sentRequests}
         />
       )}
+    </motion.div>
 
+    <AnimatePresence>
       {selectedUser && (
         <UserOverlay
           user={selectedUser}
@@ -214,7 +223,8 @@ function Friends() {
           sentRequests={sentRequests}
         />
       )}
-    </div>
+    </AnimatePresence>
+  </motion.div>
   );
 }
 
