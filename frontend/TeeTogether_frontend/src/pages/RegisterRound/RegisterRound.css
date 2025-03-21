@@ -1,46 +1,203 @@
+/* 📱🏌️‍♂️ Registreringscontainer */
 .register-round-container {
-  max-width: 400px;
-  height: 100vh ;
-  margin: 0 auto;
-  text-align: center;
-  background-color: #d0f0c0;
-}
-
-form {
+  width: 100vw;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px;
+  background: linear-gradient(to bottom, #f0f8f0, #e0e8e0); /* Mjuk golfinspirerad bakgrund */
+  font-family: "Poppins", sans-serif;
+  color: #003d00;
+  text-align: center;
 }
 
-input {
-  padding: 8px;
+/* 🏌️‍♂️ Titel */
+.register-title {
+  font-size: 26px;
+  font-weight: bold;
+  color: #005a00;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* 📋 Formulär */
+.register-form {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 20px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 5px 15px rgba(0, 128, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  border: 2px solid #008000;
+}
+
+/* ✏️ Inmatningsfält */
+.input-field {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #006400;
+  border-radius: 8px;
   font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-button {
-  background-color: green;
-  color: white;
-  font-size: 16px;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: darkgreen;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
+  transition: 0.3s ease-in-out;
   background: #f9f9f9;
-  padding: 10px;
-  margin-top: 5px;
-  border-radius: 4px;
+}
+
+.input-field:focus {
+  border-color: #004d00;
+  outline: none;
+  background: #eaffea;
+}
+
+/* 🏌️‍♂️ Registreringsknapp */
+.register-button {
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #008000, #005a00);
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.register-button:hover {
+  background: linear-gradient(135deg, #006400, #004000);
+  transform: scale(1.05);
+}
+
+/* 📜 Titel för senaste rundor */
+.rounds-title {
+  margin-top: 30px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #004d00;
+}
+
+/* 🏌️‍♂️ Lista över senaste rundor */
+.rounds-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+  width: 90%;
+  max-width: 500px;
+  border-top: 2px solid #008000;
+  border-bottom: 2px solid #008000;
+  padding-top: 10px;
+  padding-bottom: 3rem;
+}
+
+/* 🎯 Individuell rond */
+.round-item {
+  background: #d0eacd;
+  border: 1px solid rgb(0, 58, 0);
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 10px;
+  box-shadow: 0px 3px 8px rgba(0, 128, 0, 0.2);
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.3s ease-in-out;
+}
+
+.round-item:hover {
+  transform: scale(1.03);
+  box-shadow: 0px 5px 12px rgba(0, 128, 0, 0.3);
+}
+
+/* 🏌️‍♂️ Rond-information */
+.round-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* 📅 Datum */
+.round-date {
+  font-size: 14px;
+  color: #005a00;
+}
+
+/* ⛳ Golfbana */
+.round-course {
+  font-size: 16px;
+  font-weight: bold;
+  color: #004000;
+}
+
+/* 🎯 Poäng & HCP */
+.round-stats {
+  font-size: 14px;
+  font-weight: 600;
+  color: #004000;
+}
+
+/* 🔄 Laddningstext */
+.loading-text {
+  font-size: 16px;
+  font-weight: bold;
+  color: #006400;
+}
+
+/* ⚠️ Ingen rond registrerad */
+.no-rounds-text {
+  font-size: 16px;
+  color: #333;
+  margin-top: 15px;
+}
+
+/* 📱 Anpassning för mindre skärmar */
+@media (max-width: 480px) {
+  .register-title {
+    font-size: 24px;
+  }
+
+  .register-form {
+    width: 95%;
+  }
+
+  .input-field {
+    font-size: 14px;
+  }
+
+  .register-button {
+    font-size: 14px;
+  }
+
+  .rounds-list {
+    width: 95%;
+  }
+
+  .round-item {
+    font-size: 14px;
+    padding: 12px;
+  }
+}
+
+/* 🖥 Anpassning för större skärmar */
+@media (min-width: 768px) {
+  .register-title {
+    font-size: 28px;
+  }
+
+  .register-form {
+    max-width: 450px;
+  }
+
+  .rounds-list {
+    max-width: 550px;
+  }
+
+  .round-item {
+    font-size: 18px;
+  }
 }
