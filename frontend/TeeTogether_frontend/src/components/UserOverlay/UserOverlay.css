@@ -14,6 +14,7 @@
   color: #2c5f2d;
   width: 90%;
   max-width: 420px;
+  height: 70%;
   padding: 25px;
   border-radius: 15px;
   box-shadow: 0px 10px 20px rgba(50, 80, 50, 0.2);
@@ -35,7 +36,7 @@
   right: 15px;
   background: none;
   border: none;
-  font-size: 22px;
+  font-size: 40px;
   cursor: pointer;
   color: #3B7844;
   transition: 0.3s;
@@ -71,7 +72,7 @@
   padding: 0;
   margin-top: 10px;
   width: 100%;
-  max-height: 180px;
+  max-height: auto;
   overflow-y: auto;
   border-top: 2px solid #3B7844;
   border-bottom: 2px solid #3B7844;
@@ -98,7 +99,7 @@
 }
 
 .send-request {
-  background: linear-gradient(135deg, #3B7844, #2c5f2d); /* Lyxig grön gradient */
+  background: linear-gradient(135deg, #3B7844, #2c5f2d);
   color: white;
   font-size: 16px;
   font-weight: bold;

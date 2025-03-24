@@ -75,27 +75,34 @@
 /* 🏌️‍♂️ Information Sektion */
 .home-info {
   width: 90%;
-  max-width: 450px;
+  max-width: 500px;
   background: rgba(255, 255, 255, 0.95);
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0px 5px 15px rgba(0, 64, 0, 0.2);
-  border: 2px solid #008000;
-  text-align: center;
-  margin-top: 20px;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0px 5px 20px rgba(0, 64, 0, 0.15);
+  border: 2px solid #3B7844;
+  text-align: left; 
+  margin-top: 24px;
+  font-family: "Poppins", sans-serif;
+  color: #1f3d1f;
 }
 
 .home-info h2 {
-  font-size: 22px;
+  font-size: 24px;
   color: #004D00;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .home-info p {
-  font-size: 16px;
-  line-height: 1.5;
-  margin-bottom: 12px;
+  font-size: 17px;
+  line-height: 1.5; 
+  margin-bottom: 16px; 
+  color: #2e4e2e;
 }
+
+
 
 /* 📱 Anpassning för mindre skärmar */
 @media (max-width: 480px) {

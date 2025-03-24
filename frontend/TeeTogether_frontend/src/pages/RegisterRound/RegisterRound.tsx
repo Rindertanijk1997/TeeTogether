@@ -25,14 +25,15 @@ const RegisterRound = () => {
     if (userId) {
       const storedHCP = localStorage.getItem(`hcp-${userId}`);
       if (storedHCP) setCurrentHCP(Number(storedHCP));
-
+  
       const storedRounds = localStorage.getItem(`rounds-${userId}`);
-      if (storedRounds) setRounds(JSON.parse(storedRounds));
-
-      fetchUserData();
-      fetchRounds();
+      if (storedRounds) setRounds(JSON.parse(storedRounds)); // ✅ Visa direkt
+  
+      fetchUserData();    // Hämtar aktuell HCP
+      fetchRounds(true);  // Hämtar nya rundor, men visar inte laddningssnurran
     }
   }, [userId]);
+  
 
   const fetchUserData = async () => {
     try {
@@ -61,24 +62,28 @@ const RegisterRound = () => {
     }
   };
 
-  const fetchRounds = async () => {
+  const fetchRounds = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true); // Visa laddning bara om det inte är "silent"
+  
       const response = await fetch(`${BACKEND_URL}/rounds?userId=${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+  
       if (!response.ok) throw new Error("Kunde inte hämta ronder.");
-
+  
       const data = await response.json();
       const latestRounds = data.slice(-5);
+  
       setRounds(latestRounds);
-      localStorage.setItem(`rounds-${userId}`, JSON.stringify(latestRounds));
+      localStorage.setItem(`rounds-${userId}`, JSON.stringify(latestRounds)); // ✅ Uppdatera lagrat
     } catch (error) {
       console.error("❌ Fel vid hämtning av ronder:", error);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false); // Avsluta laddning
     }
   };
+  
 
   const submitRound = async (e: React.FormEvent) => {
     e.preventDefault();
