@@ -119,12 +119,14 @@
   align-items: center;
   font-size: 14px;
   font-weight: 600;
+  padding-bottom: 5px;
 }
 
 /* 📅 Datum */
 .round-date {
   font-size: 14px;
   color: #005a00;
+  padding-right: 2rem;
 }
 
 /* ⛳ Golfbana */
@@ -135,13 +137,27 @@
   padding-bottom: 2px;
 }
 
-/* 🎯 Poäng & HCP */
 .round-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 14px;
   font-weight: 600;
-  color: #004000;
-
 }
+
+.round-score{
+  font-size: 14px;
+  color: #005a00;
+  padding-right: 2rem;
+}
+
+.round-hcp {
+  font-size: 16px;
+  font-weight: bold;
+  color: #004000;
+  padding-bottom: 2px;
+}
+
 
 /* 🔄 Laddningstext */
 .loading-text {
