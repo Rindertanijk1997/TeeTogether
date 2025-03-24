@@ -36,6 +36,7 @@
   transition: all 0.3s ease-in-out;
   margin-bottom: 15px;
   box-shadow: 0px 3px 8px rgba(46, 90, 52, 0.3);
+  max-width: 95%;
 }
 
 .toggle-button:hover {
