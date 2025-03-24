@@ -174,8 +174,8 @@ function Friends() {
         localStorage.setItem("friends", JSON.stringify(updatedFriends));
       }
   
-      fetchFriends(); // ✅ Hämta senaste vänner
-      fetchFriendRequests(); // ✅ Hämta senaste förfrågningar
+      fetchFriends(); 
+      fetchFriendRequests(); 
     } catch (error) {
       console.error("❌ Fel vid accepterande av vänförfrågan:", error);
     }
