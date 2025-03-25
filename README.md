@@ -10,9 +10,9 @@ denna är för mobil, typ iphone 12pro. men funkar även på surfplatta.
    ```bash
    https://github.com/Rindertanijk1997/TeeTogether.git
    
-2. Gå till rootmappen
+2. Gå till projektmappen
    ```bash
-   cd Rindertanijk1997/TeeTogether/frontend/TeeTogether_frontend
+   cd TeeTogether/frontend/TeeTogether_frontend
 
 4. Börja med att installera beroenden
    ```bash
