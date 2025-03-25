@@ -1,0 +1,83 @@
+.profile-page {
+  width: 100vw;
+  height: 85vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom, #e1f5e1, #b3ddb3);
+}
+
+.profile-container {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0px 10px 30px rgba(0, 128, 0, 0.3);
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+}
+
+.profile-title {
+  font-size: 26px;
+  font-weight: bold;
+  color: #2c5f2d;
+  margin-bottom: 20px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #3B7844;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.submit-button, .toggle-button, .logout-button {
+  background: linear-gradient(135deg, #3B7844, #2c5f2d);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  border: none;
+  width: 100%;
+}
+
+.submit-button:hover, .toggle-button:hover, .logout-button:hover {
+  background: #1f4d20;
+}
+
+
+@media (min-width: 600px) {
+  .profile-container {
+    padding: 40px;
+    max-width: 700px;
+  }
+
+  .profile-title {
+    font-size: 48px;
+  }
+
+  .input-field {
+    font-size: 30px;
+    padding: 14px;
+  }
+
+  .submit-button,
+  .toggle-button,
+  .logout-button {
+    font-size: 35px;
+    padding: 14px;
+  }
+
+  .profile-logged-in {
+    font-size: 38px;
+  }
+
+  .toggle-text {
+    font-size: 30px;
+  }
+}

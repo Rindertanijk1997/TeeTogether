@@ -1,0 +1,34 @@
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: black;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.bottom-nav a {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-icon {
+  width: 40px;  
+  height: 40px; 
+  object-fit: contain; 
+}
+
+@media (min-width: 600px) {
+  .nav-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .bottom-nav {
+    padding: 16px 0;
+  }
+}
