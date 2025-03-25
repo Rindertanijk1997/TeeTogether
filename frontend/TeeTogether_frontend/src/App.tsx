@@ -11,7 +11,6 @@ import Nav from "./components/Nav/Nav";
 function App() {
   const authContext = useContext(AuthContext);
 
-  // Hantera fallet där authContext kan vara undefined
   const userId = authContext?.userId || null;
 
   return (

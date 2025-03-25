@@ -15,7 +15,7 @@
   width: 90%;
   padding: 20px;
   max-width: 420px;
-  height: 75%;
+  height: 77%;
   border-radius: 15px;
   box-shadow: 0px 10px 20px rgba(50, 80, 50, 0.2);
   border: 2px solid #3B7844;
@@ -142,9 +142,38 @@
   margin: 1rem;
 }
 
-@media (max-width: 480px) {
-  .send-request {
-    font-size: 14px;
-    padding: 10px 16px;
+@media (min-width: 600px) {
+  .user-overlay {
+    max-width: 700px;
+    padding: 30px;
+    height: auto;
+  }
+
+  .overlay-header h2 {
+    font-size: 45px;
+  }
+
+  .user-info, .user-hcp {
+    font-size: 30px;
+  }
+
+  .rounds-section h3 {
+    font-size: 35px;
+  }
+
+  .round-item span {
+    font-size: 28px;
+    padding: 2px;
+  }
+
+  .send-request,
+  .sent-request {
+    font-size: 30px;
+    padding: 14px 24px;
+  }
+
+  .close-overlay {
+    font-size: 60px;
   }
 }
+

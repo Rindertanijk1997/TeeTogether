@@ -10,7 +10,6 @@ const Home = () => {
     animate={{ opacity: 1 }}
     transition={{ duration: 1 }}
   >
-    {/* 🌟 Hero Sektion */}
     <motion.div 
       className="home-hero"
       initial={{ opacity: 0, y: -30 }}
@@ -38,7 +37,6 @@ const Home = () => {
       </motion.div>
     </motion.div>
 
-    {/* 🏌️‍♂️ Om TeeTogether */}
     <motion.div 
       className="home-info"
       initial={{ opacity: 0, y: 20 }}

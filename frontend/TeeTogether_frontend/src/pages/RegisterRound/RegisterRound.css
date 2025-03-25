@@ -1,4 +1,3 @@
-/* 📱🏌️‍♂️ Registreringscontainer */
 .register-round-container {
   width: 100vw;
   min-height: 100vh;
@@ -13,7 +12,6 @@
   text-align: center;
 }
 
-/* 🏌️‍♂️ Titel */
 .register-title {
   font-size: 26px;
   font-weight: bold;
@@ -23,7 +21,6 @@
   letter-spacing: 1px;
 }
 
-/* 📋 Formulär */
 .register-form {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 12px;
@@ -37,8 +34,7 @@
   border: 2px solid #008000;
 }
 
-/* ✏️ Inmatningsfält */
-.input-field {
+.input-field-reg {
   width: 100%;
   padding: 12px;
   border: 2px solid #006400;
@@ -48,13 +44,12 @@
   background: #f9f9f9;
 }
 
-.input-field:focus {
+.input-field-reg:focus {
   border-color: #004d00;
   outline: none;
   background: #eaffea;
 }
 
-/* 🏌️‍♂️ Registreringsknapp */
 .register-button {
   padding: 12px;
   font-size: 16px;
@@ -72,7 +67,6 @@
   transform: scale(1.05);
 }
 
-/* 📜 Titel för senaste rundor */
 .rounds-title {
   margin-top: 30px;
   font-size: 22px;
@@ -80,7 +74,6 @@
   color: #004d00;
 }
 
-/* 🏌️‍♂️ Lista över senaste rundor */
 .rounds-list {
   list-style: none;
   padding: 0;
@@ -93,7 +86,6 @@
   padding-bottom: 3rem;
 }
 
-/* 🎯 Individuell rond */
 .round-item {
   background: #d0eacd;
   border: 1px solid rgb(0, 58, 0);
@@ -112,7 +104,6 @@
   box-shadow: 0px 5px 12px rgba(0, 128, 0, 0.3);
 }
 
-/* 🏌️‍♂️ Rond-information */
 .round-info {
   display: flex;
   justify-content: space-between;
@@ -122,14 +113,12 @@
   padding-bottom: 5px;
 }
 
-/* 📅 Datum */
 .round-date {
   font-size: 14px;
   color: #005a00;
   padding-right: 2rem;
 }
 
-/* ⛳ Golfbana */
 .round-course {
   font-size: 16px;
   font-weight: bold;
@@ -159,63 +148,52 @@
 }
 
 
-/* 🔄 Laddningstext */
 .loading-text {
   font-size: 16px;
   font-weight: bold;
   color: #006400;
 }
 
-/* ⚠️ Ingen rond registrerad */
 .no-rounds-text {
   font-size: 16px;
   color: #333;
   margin-top: 15px;
 }
 
-/* 📱 Anpassning för mindre skärmar */
-@media (max-width: 480px) {
+@media (min-width: 600px) {
   .register-title {
-    font-size: 24px;
+    font-size: 45px;
   }
 
   .register-form {
-    width: 95%;
+    padding: 30px;
+    max-width: 700px;
   }
 
-  .input-field {
-    font-size: 14px;
+  .input-field-reg {
+    font-size: 30px;
+    padding: 14px;
   }
 
   .register-button {
-    font-size: 14px;
+    font-size: 35px;
+    padding: 14px;
   }
 
-  .rounds-list {
-    width: 95%;
+  .rounds-list  {
+    max-width: 700px;
+  }
+
+  .rounds-title {
+    font-size: 45px;
   }
 
   .round-item {
-    font-size: 14px;
-    padding: 12px;
+    font-size: 27px;
+    padding: 20px;
   }
-}
 
-/* 🖥 Anpassning för större skärmar */
-@media (min-width: 768px) {
-  .register-title {
+  .round-info p, .round-stats p {
     font-size: 28px;
-  }
-
-  .register-form {
-    max-width: 450px;
-  }
-
-  .rounds-list {
-    max-width: 550px;
-  }
-
-  .round-item {
-    font-size: 18px;
   }
 }

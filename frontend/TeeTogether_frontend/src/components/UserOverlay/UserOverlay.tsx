@@ -47,7 +47,7 @@ function UserOverlay({ user, onClose, onSendRequest, isFriend, sentRequests }: U
       const data = await response.json();
 
       if (response.ok) {
-        setRounds(data.slice(-3)); // Hämta senaste 3 rundorna
+        setRounds(data.slice(-3)); 
       } else {
         throw new Error("Kunde inte hämta rundor.");
       }
@@ -77,7 +77,6 @@ function UserOverlay({ user, onClose, onSendRequest, isFriend, sentRequests }: U
         <p className="user-hcp"><strong>HCP:</strong> {user.CurrentHCP}</p>
       </div>
 
-      {/* Senaste rundor */}
       <div className="rounds-section">
         <h3>Senaste Golf-Rundor</h3>
         {loading ? (
@@ -106,7 +105,6 @@ function UserOverlay({ user, onClose, onSendRequest, isFriend, sentRequests }: U
         )}
       </div>
 
-      {/* Vänförfrågan */}
       {!isFriend && !sentRequests.includes(user.UserId) && (
         <button className="send-request" onClick={() => onSendRequest(user.UserId)}>
           Lägg till vän

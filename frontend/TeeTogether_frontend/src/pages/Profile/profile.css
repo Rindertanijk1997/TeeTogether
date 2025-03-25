@@ -50,8 +50,34 @@
   background: #1f4d20;
 }
 
-@media (max-width: 480px) {
+
+@media (min-width: 600px) {
   .profile-container {
-    width: 95%;
+    padding: 40px;
+    max-width: 700px;
+  }
+
+  .profile-title {
+    font-size: 48px;
+  }
+
+  .input-field {
+    font-size: 30px;
+    padding: 14px;
+  }
+
+  .submit-button,
+  .toggle-button,
+  .logout-button {
+    font-size: 35px;
+    padding: 14px;
+  }
+
+  .profile-logged-in {
+    font-size: 38px;
+  }
+
+  .toggle-text {
+    font-size: 30px;
   }
 }

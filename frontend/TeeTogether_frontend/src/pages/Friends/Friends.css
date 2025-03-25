@@ -92,46 +92,29 @@
   color: #333;
 }
 
-@media (max-width: 480px) {
+@media (min-width: 600px) {
   .friends-title {
-    font-size: 24px;
+    font-size: 40px;
+    margin-bottom: 20px;
   }
 
   .toggle-button {
-    font-size: 14px;
-    padding: 10px 22px;
+    font-size: 35px;
+    padding: 14px 34px;
   }
 
   .friends-content {
-    width: 95%;
-    height: 70vh;
-  }
-
-  .friend-card {
-    padding: 10px;
+    max-width: 90%;
+    height: 75vh;
+    padding: 30px;
+    font-size: 35px;
   }
 
   .friend-card h3 {
-    font-size: 18px;
+    font-size: 35px;
   }
 
   .friend-card p {
-    font-size: 14px;
+    font-size: 25px;
   }
 }
-
-@media (min-width: 768px) {
-  .friends-title {
-    font-size: 32px;
-  }
-
-  .toggle-button {
-    font-size: 18px;
-    padding: 14px 32px;
-  }
-
-  .friends-content {
-    height: 75vh;
-  }
-}
-

@@ -1,4 +1,3 @@
-/* Grundläggande styling för UserList */
 .users-list {
     display: flex;
     flex-direction: column;
@@ -8,7 +7,6 @@
     padding: 10px;
   }
   
-  /* Styling för sökfältet */
   .search-input {
     width: 90%;
     padding: 10px;
@@ -22,8 +20,7 @@
   .search-input:focus {
     border-color: #006400;
   }
-  
-  /* Styling för användarkort */
+
   .user-row {
     background: #d0f0c0;
     padding: 12px;
@@ -44,20 +41,32 @@
     transform: scale(1.02);
   }
   
-  /* Textstil för användarinformation */
   .user-row p {
     margin: 5px 0;
     font-size: 14px;
   }
   
-  /* Anpassad font-storlek för större skärmar */
-  @media (min-width: 768px) {
-    .user-row p {
-      font-size: 16px;
+  @media (min-width: 600px) {
+    .search-input {
+      font-size: 28px;
+      padding: 12px;
+      width: 80%;
     }
   
-    .search-input {
-      width: 70%;
+    .users-list {
+      font-size: 35px;
+      gap: 15px;
+    }
+
+    .user-row {
+      font-size: 18px;
+      padding: 14px;
+    }
+  
+    .user-row p {
+      font-size: 27px;
     }
   }
+  
+  
   
