@@ -8,6 +8,7 @@
   margin-top: 20px;
   box-shadow: 0 4px 10px rgba(59, 120, 68, 0.15);
   color: #1f4d20;
+  margin: 0 auto;
 }
 
 .friend-requests h3 {
@@ -42,7 +43,6 @@
   font-size: 16px;
 }
 
-/* ✔ Acceptera-knapp */
 .friend-requests button {
   background: linear-gradient(135deg, #3B7844, #2c5f2d);
   color: white;
@@ -65,14 +65,24 @@
   transform: scale(0.95);
 }
 
-@media (max-width: 480px) {
-  .friend-requests li {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+
+@media (min-width: 600px) {
+  .friend-requests {
+    max-width: 600px;
+    padding: 30px;
+  }
+
+  .friend-requests h3 {
+    font-size: 35px;
+  }
+
+  .friend-requests p {
+    font-size: 27px;
   }
 
   .friend-requests button {
-    width: 100%;
+    font-size: 24px;
+    padding: 10px 20px;
   }
 }
+

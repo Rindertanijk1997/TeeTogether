@@ -139,7 +139,7 @@ const RegisterRound = () => {
           value={course}
           onChange={(e) => setCourse(e.target.value)}
           required
-          className="input-field"
+          className="input-field-reg"
         />
         <input
           type="number"
@@ -147,7 +147,7 @@ const RegisterRound = () => {
           value={score}
           onChange={(e) => setScore(Number(e.target.value))}
           required
-          className="input-field"
+          className="input-field-reg"
         />
         <button type="submit" className="register-button">Registrera Rond</button>
       </motion.form>
