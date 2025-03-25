@@ -162,7 +162,6 @@ function Friends() {
   
       console.log("✅ Vänförfrågan accepterad!");
   
-      // 🟢 Uppdatera localStorage och state
       const updatedRequests = friendRequests.filter(req => req.RequesterId !== friendId);
       setFriendRequests(updatedRequests);
       localStorage.setItem("friendRequests", JSON.stringify(updatedRequests));

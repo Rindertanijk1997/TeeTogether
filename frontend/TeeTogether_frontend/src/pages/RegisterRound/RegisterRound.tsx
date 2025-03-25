@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion"; // ✅ Importera Framer Motion
+import { motion } from "framer-motion"; 
 import "./registerRound.css";
 
 const BACKEND_URL = "https://w9h1wx1u7l.execute-api.eu-north-1.amazonaws.com";
@@ -27,10 +27,10 @@ const RegisterRound = () => {
       if (storedHCP) setCurrentHCP(Number(storedHCP));
   
       const storedRounds = localStorage.getItem(`rounds-${userId}`);
-      if (storedRounds) setRounds(JSON.parse(storedRounds)); // ✅ Visa direkt
+      if (storedRounds) setRounds(JSON.parse(storedRounds)); 
   
-      fetchUserData();    // Hämtar aktuell HCP
-      fetchRounds(true);  // Hämtar nya rundor, men visar inte laddningssnurran
+      fetchUserData();    
+      fetchRounds(true);  
     }
   }, [userId]);
   
@@ -64,7 +64,7 @@ const RegisterRound = () => {
 
   const fetchRounds = async (silent = false) => {
     try {
-      if (!silent) setLoading(true); // Visa laddning bara om det inte är "silent"
+      if (!silent) setLoading(true); 
   
       const response = await fetch(`${BACKEND_URL}/rounds?userId=${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -76,11 +76,11 @@ const RegisterRound = () => {
       const latestRounds = data.slice(-5);
   
       setRounds(latestRounds);
-      localStorage.setItem(`rounds-${userId}`, JSON.stringify(latestRounds)); // ✅ Uppdatera lagrat
+      localStorage.setItem(`rounds-${userId}`, JSON.stringify(latestRounds));
     } catch (error) {
       console.error("❌ Fel vid hämtning av ronder:", error);
     } finally {
-      if (!silent) setLoading(false); // Avsluta laddning
+      if (!silent) setLoading(false); 
     }
   };
   
