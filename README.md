@@ -1,7 +1,7 @@
 # Dokumentation av TeeTogether
 
 ## Beskrivning
-denna är för mobil, typ iphone 12pro. men funkar även på surfplatta.
+denna är för mobil, (testa på iphone 12pro). men funkar även på surfplatta.
 
 ## För att klona ner och testa
 
