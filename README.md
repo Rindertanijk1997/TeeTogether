@@ -48,6 +48,8 @@ Du kan registrera en ny användare – eller logga in med någon av dessa konton
       
    7. trycker du på en person får du upp en overlay, i den får du upp lite info om personen, samt kan se senaste ronder hen spelat. man kan även skicka vänförfrågan. denna overlay kan man få upp även på vänner.
 
+
+### Figma skiss https://www.figma.com/design/RCk4fWK6QGBvfx1Y0B0hO8/Untitled?node-id=0-1&m=dev&t=AsAAh4qDwbtvRAHt-1
    8. har du skickat en vänförfrågan, så kan du testa att logga in på användaren du har skickat till, och testa acceptera.
       
   
